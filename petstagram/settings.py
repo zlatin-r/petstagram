@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from petstagram.accounts.mamangers import AppUserManager
+from petstagram.accounts.managers import AppUserManager
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
