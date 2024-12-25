@@ -1,9 +1,10 @@
 from django.urls import path
+from petstagram.common import views
 
-from petstagram.common.views import IndexView, like_pet_photo
 
-
-urlpatterns = (
-    path("", IndexView.as_view(), name="index"),
-    path("pet_photo_like/<int:pk>/", like_pet_photo, name="like_pet_photo"),
-)
+urlpatterns = [
+    path('', views.HomePage.as_view(), name='home'),
+    path('like/<int:photo_id>/', views.likes_functionality, name='like'),
+    path('share/<int:photo_id>/', views.share_functionality, name='share'),
+    path('comment/<int:photo_id>/', views.comment_functionality, name='comment')
+]

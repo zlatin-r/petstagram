@@ -1,12 +1,11 @@
 from django.urls import path, include
+from petstagram.photos import views
 
-from petstagram.photos.views import PetPhotoCreateView, PetPhotoDetailView, PetPhotoEditView
-
-urlpatterns = (
-    path("add/", PetPhotoCreateView.as_view(), name="add photo"),
-    path("<int:pk>/",
-         include([
-             path("", PetPhotoDetailView.as_view(), name="details photo"),
-             path("edit/", PetPhotoEditView.as_view(), name="edit photo"),
-         ]))
-)
+urlpatterns = [
+    path('add/', views.PhotoAddPage.as_view(), name='photo-add'),
+    path('<int:pk>/', include([
+        path('', views.PhotoDetailsView.as_view(), name='photo-details'),
+        path('edit/', views.PhotoEditPage.as_view(), name='photo-edit'),
+        path('delete/', views.photo_delete, name='photo-delete'),
+    ])),
+]

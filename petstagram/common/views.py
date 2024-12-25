@@ -1,71 +1,78 @@
-from django.shortcuts import render, redirect
-from django.views import generic as views
-from petstagram.common.models import PhotoLike
+from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.shortcuts import render, redirect, resolve_url
+from django.views.generic import ListView
+from pyperclip import copy
+
+from petstagram.common.forms import CommentForm, SearchForm
+from petstagram.common.models import Like
 from petstagram.photos.models import Photo
 
 
-# def index(request):
-#     pet_name_pattern = request.GET.get('pet_name_pattern', '')
-#
-#     pet_photos = Photo.objects.all()
-#
-#     if pet_name_pattern:
-#         pet_photos = pet_photos.filter(name__icontains=pet_name_pattern)
-#
-#     context = {
-#         "pet_photos": pet_photos,
-#         "pet_name_pattern": pet_name_pattern,
-#     }
-#     return render(request, "common/index.html", context)
+class HomePage(ListView):
+    model = Photo
+    template_name = 'common/home-page.html'
+    context_object_name = 'all_photos'  # by default is object_list and photos
+    paginate_by = 10
 
-class IndexView(views.ListView):
-    queryset = Photo.objects.all() \
-    .prefetch_related("tagged_pets") \
-    .prefetch_related("photolike_set")
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
 
-    template_name = 'common/index.html'
+        context['comment_form'] = CommentForm()
+        context['search_form'] = SearchForm(self.request.GET)
 
-    paginate_by = 1
+        user = self.request.user
 
-    @property
-    def pet_name_pattern(self):
-        return self.request.GET.get('pet_name_pattern', "")
+        for photo in context['all_photos']:
+            photo.has_liked = photo.like_set.filter(user=user).exists() if user.is_authenticated else False
 
-    def get_context_data(self, *args, **kwargs):
-        context = super().get_context_data(*args, **kwargs)
-        context["pet_name_pattern"] = self.pet_name_pattern
         return context
 
     def get_queryset(self):
-        queryset = super().get_queryset()
+        queryset = super().get_queryset()  # All objects
+        pet_name = self.request.GET.get('pet_name')
 
-        queryset = self.filter_by_pet_name_pattern(queryset)
+        if pet_name:
+            queryset = queryset.filter(  # Filter the objects
+                tagged_pets__name__icontains=pet_name
+            )
 
-        return queryset
-
-    def filter_by_pet_name_pattern(self, queryset):
-        pet_name_pattern = self.pet_name_pattern
-
-        filter_query = {}
-
-        if pet_name_pattern:
-            filter_query['tagged_pets__name__icontains'] = pet_name_pattern
-
-        return queryset.filter(**filter_query)
+        return queryset  # Return the new queryset
 
 
-def like_pet_photo(request, pk):
-    # pet_photo = Photo.objects.get(pk=pk, user=request.user)
-    # pet_photo = Photo.objects.get(pk=pk)
-    # pet_photo_like = PhotoLike.objects.first(pk=pk, user=request.user)
+@login_required
+def likes_functionality(request, photo_id: int):
+    liked_object = Like.objects.filter(
+        to_photo_id=photo_id,
+        user=request.user
+    ).first()
 
-    pet_photo_like = PhotoLike.objects.filter(pet_photo_id=pk).first()
-
-    if pet_photo_like:
-        # dislike
-        pet_photo_like.delete()
+    if liked_object:
+        liked_object.delete()
     else:
-        # like
-        PhotoLike.objects.create(pet_photo_id=pk)
+        like = Like(to_photo_id=photo_id, user=request.user)
+        like.save()
 
-    return redirect(request.META.get('HTTP_REFERER') + f"#photo-{pk}")
+    return redirect(request.META.get('HTTP_REFERER') + f'#{photo_id}')
+
+
+def share_functionality(request, photo_id: int):
+    copy(request.META.get('HTTP_HOST') + resolve_url('photo-details', photo_id))
+    # HTTP_HOST = http://127.0.0.1/   + photos/<int:pk>/ => http://127.0.0.1/photos/<int:pk>/
+
+    return redirect(request.META.get('HTTP_REFERER') + f'#{photo_id}')
+
+@login_required
+def comment_functionality(request, photo_id: int):
+    if request.POST:
+        photo = Photo.objects.get(pk=photo_id)
+        comment_form = CommentForm(request.POST)
+
+        if comment_form.is_valid():
+            comment = comment_form.save(commit=False)
+            comment.to_photo = photo
+            comment.user = request.user
+            comment.save()
+
+        return redirect(request.META.get('HTTP_REFERER') + f'#{photo_id}')
+

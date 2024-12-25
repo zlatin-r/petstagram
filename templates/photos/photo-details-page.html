@@ -1,42 +1,9 @@
-{% extends "base.html" %}
-
-{% load static %}
+{% extends 'common/base.html' %}
 
 {% block content %}
-
     <div class="container">
         <div class="col-9">
-            <a href="{% url 'edit photo' pk=object.pk %}">Edit</a>
-            {% include "partials/pet_photo_list_item.html" with photo=object %}
-
-            <p class="pet-details">{{ object.description }}</p>
-
-            <h5 class="postTime">{{ object.date_of_publication }}</h5>
-
-            <div class="comments">
-                {% for comment in object.comment_set.all %}
-                    <div class="top">
-                        <div class="userDetails">
-                            <div class="comment-data">
-                                <div class="profilepic">
-                                    <div class="profile_img">
-                                        <div class="image">
-                                            <img src="{% static 'images/person.png' %}" alt="img8">
-                                        </div>
-                                    </div>
-                                </div>
-                                <p>
-                                    <a href="{% url 'profile details' pk=1 %}">admin</a>
-                                    <!-- User Comment -->
-                                    - {{ comment.text }}
-                                </p>
-                            </div>
-                            <span>{{ comment.date_time_of_publication }}</span>
-                        </div>
-                    </div>
-                {% endfor %}
-            </div>
+            {% include 'common/pet-posts.html' with photo_page=True %}
         </div>
     </div>
-
 {% endblock %}

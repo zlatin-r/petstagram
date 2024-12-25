@@ -1,19 +1,23 @@
-from django.contrib.auth.base_user import AbstractBaseUser
+from django.contrib.auth.models import PermissionsMixin
 from django.db import models
+from django.contrib.auth.base_user import AbstractBaseUser
+from petstagram.accounts.managers import AppUserManager
 
 
-class AppUser(AbstractBaseUser):
+class AppUser(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(
-        max_length=255,
-        unique=True
+        unique=True,
     )
+
     is_active = models.BooleanField(
-        default=True
+        default=True,
     )
+
     is_staff = models.BooleanField(
-        default=False
+        default=False,
     )
 
+    USERNAME_FIELD = "email"
+    REQUIRED_FIELDS = []  # Not really needed
 
-    USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = [] # not really needed
+    objects = AppUserManager()

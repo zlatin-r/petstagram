@@ -1,54 +1,59 @@
-from django.urls import reverse
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.shortcuts import render, redirect, get_object_or_404
+from django.urls import reverse_lazy
+from django.views.generic import CreateView, UpdateView, DetailView
 
-from django.shortcuts import render
-from django.views import generic as view
-
-from petstagram.photos.forms import PetPhotoCreateForm, PetPhotoEditForm
+from petstagram.common.forms import CommentForm
+from petstagram.photos.forms import PhotoAddForm, PhotoEditForm
 from petstagram.photos.models import Photo
 
 
-class PetPhotoCreateView(view.CreateView):
-    form_class = PetPhotoCreateForm
-    template_name = "photos/photo-add-page.html"
-    queryset = Photo.objects.all() \
-        .prefetch_related("tagged_pets")
+class PhotoAddPage(LoginRequiredMixin, CreateView):
+    model = Photo
+    template_name = 'photos/photo-add-page.html'
+    form_class = PhotoAddForm
+    success_url = reverse_lazy('home')
+
+    def form_valid(self, form):
+        photo = form.save(commit=False)
+        photo.user = self.request.user
+
+        return super().form_valid(form)
+
+
+class PhotoEditPage(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = Photo
+    form_class = PhotoEditForm
+    template_name = 'photos/photo-edit-page.html'
+
+    def test_func(self):
+        photo = get_object_or_404(Photo, slug=self.kwargs['pk'])
+        return self.request.user == photo.user
 
     def get_success_url(self):
-        return reverse("details photo", kwargs={"pk": self.object.pk})
+        return reverse_lazy('photo-details', kwargs={'pk': self.object.pk})
+
+@login_required
+def photo_delete(request, pk: int):
+    photo = Photo.objects.get(pk=pk)
+
+    if request.user == photo.user:
+        photo.delete()
+
+    return redirect('home')
 
 
-# def add_photo(request):
-#     pets = Pet.objects.all()  # Fetch all pets from the database
-#     context = {
-#         'pets': pets,
-#     }
-#     return render(request, "photos/photo-add-page.html", context)
+class PhotoDetailsView(LoginRequiredMixin, DetailView):
+    model = Photo
+    template_name = 'photos/photo-details-page.html'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
 
-class PetPhotoDetailView(view.DetailView):
-    queryset = Photo.objects.all() \
-        .prefetch_related("photolike_set") \
-        .prefetch_related("comment_set") \
-        .prefetch_related("tagged_pets")
+        context['likes'] = self.object.like_set.all()
+        context['comments'] = self.object.comment_set.all()
+        context['comment_form'] = CommentForm()
+        self.object.has_liked = self.object.like_set.filter(user=self.request.user).exists()
 
-    template_name = "photos/photo-details-page.html"
-
-
-# def details_photo(request, pk):
-#     context = {
-#         "pet_photo": Photo.objects.get(pk=pk),
-#     }
-#     return render(request, "photos/photo-details-page.html", context)
-
-
-class PetPhotoEditView(view.UpdateView):
-    queryset = Photo.objects.all() \
-        .prefetch_related("tagged_pets")
-    template_name = "photos/photo-edit-page.html"
-    form_class = PetPhotoEditForm
-
-    def get_success_url(self):
-        return reverse("details photo", kwargs={"pk": self.object.pk})
-
-# def edit_photo(request, pk):
-#     return render(request, "photos/photo-edit-page.html")
+        return context

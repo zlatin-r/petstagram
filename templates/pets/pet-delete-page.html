@@ -1,14 +1,11 @@
-{% extends "base.html" %}
-
-{% load static %}
+{% extends 'common/base.html' %}
 
 {% block content %}
-
     <div class="edit-delete edit-photo">
         <h2>Delete pet</h2>
         <!-- Starts Delete Pet Form -->
-        <form action="{% url 'delete pet' username=username pet_slug=pet.slug %}" method="post">
-            
+        <form method="post">
+            {% csrf_token %}
             {{ form.as_p }}
             <!-- Delete Pet Button -->
             <button class="delete-btn" type="submit">Delete</button>
@@ -16,11 +13,7 @@
             <a class="btn btn-primary" href="javascript:history.back()">
                 <button class="edit-btn" type="button">Go back</button>
             </a>
-            
-            {% csrf_token %}
         </form>
         <!-- End Delete Pet Form -->
-        
     </div>
-
 {% endblock %}
