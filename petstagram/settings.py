@@ -1,5 +1,7 @@
 from pathlib import Path
 
+from petstagram.accounts.mamangers import AppUserManager
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = 'django-insecure-*vuc=o%vtb33vp&8!52su2^4xqvn8(xqr4klcf0!j_^fe49)!b'
@@ -97,6 +99,9 @@ MEDIA_ROOT = BASE_DIR / 'mediafiles'
 MEDIA_URL = '/media/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+AUTH_USER_MODEL = 'accounts.AppUser'
+
+objects = AppUserManager()
 
 # LOGGING = {
 #     'version': 1,
