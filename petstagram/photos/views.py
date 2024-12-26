@@ -4,8 +4,8 @@ from django.shortcuts import render
 def photo_add(request):
     return render(request, template_name='photos/photo-add-page.html')
 
-def photo_details(request):
+def photo_details(request, pk):
     return render(request, template_name='photos/photo-details-page.html')
 
-def photo_edit(request):
+def photo_edit(request, pk):
     return render(request, template_name='photos/photo-edit-page.html')
