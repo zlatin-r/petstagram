@@ -14,12 +14,14 @@ class Pet(models.Model):
         blank=True
     )
     slug = models.SlugField(
-        null=False,
+        null=True,
         blank=True,
         unique=True
     )
 
     def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+
         if not self.slug:
             self.slug = slugify(f"{self.name}-{self.id}")
 
