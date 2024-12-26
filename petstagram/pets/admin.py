@@ -7,4 +7,4 @@ from petstagram.pets.models import Pet
 
 @admin.register(Pet)
 class Pet(admin.ModelAdmin):
-    pass
+    list_display = ("name", "slug")
