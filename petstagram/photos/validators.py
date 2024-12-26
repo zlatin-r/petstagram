@@ -1,4 +1,4 @@
-# from django.core.exceptions import ValidationError
+from django.core.exceptions import ValidationError
 from django.utils.deconstruct import deconstructible
 
 
@@ -25,5 +25,5 @@ class FileSizeValidator:
         self.__message = value
 
     def __call__(self, value):
-        if value > self.max_size * 1024 * 1024:
+        if value.size > self.max_size * 1024 * 1024:
             raise ValidationError(self.message)
