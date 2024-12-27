@@ -21,7 +21,6 @@ from django.urls import path, include
 from petstagram import accounts
 
 urlpatterns = [
-    #    path('admin/', admin.site.urls),
     path('admin/', admin.site.urls),
     path('', include('petstagram.common.urls')),
     path('accounts/', include('petstagram.accounts.urls')),

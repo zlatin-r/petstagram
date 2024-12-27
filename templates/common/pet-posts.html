@@ -28,6 +28,21 @@
                 {% if photo.location %}
                     <span>{{ photo.location }}</span>
                 {% endif %}
+
+                {% if photo_page %}
+                    <div class="edit-delete-btns">
+                        <!-- Link to Edit Pet Photo Page -->
+                        <a href="{% url 'photo-edit' photo.pk %}">
+                            <img class="edit-img" src="{% static '/images/edit-pen-icon-6.jpg' %}"
+                                 alt="edit button">
+                        </a>
+                        <!-- Link to Delete Pet Photo Page -->
+                        <a href="#">
+                            <img class="bin-img" src="{% static '/images/icon-remove-22.jpg' %}"
+                                 alt="bin button">
+                        </a>
+                    </div>
+                {% endif %}
             </h3>
         </div>
     </div>
@@ -73,7 +88,7 @@
         <!-- Link to First Tagged Pet Details Page-->
         {% for pet in photo.tagged_pets.all %}
             <!-- Link to First Tagged Pet Details Page-->
-            <a href="{% url 'pet_details' "username" pet.slug %}">
+            <a href="{% url 'pet-details' "username" pet.slug %}">
                 <p class="message">
                     <b>{{ pet.name }}</b>
                 </p>
@@ -81,39 +96,43 @@
         {% endfor %}
 
         {% if photo_page %}
-            <h5 class="postTime">{{ photo.date_of_publication }}</h5>
+            <p class="pet-details">{{ photo.description }}</p>
         {% else %}
-            <a href="{% url 'photo_details' photo.pk %}">
+            <a href="{% url 'photo-details' photo.pk %}">
                 <h4 class="details">See details</h4>
             </a>
         {% endif %}
 
+        <h5 class="postTime">{{ photo.date_of_publication }}</h5>
+
         <!-- End Tagged Pets -->
         {% if photo_page %}
-            <div class="comments">
-                <div class="top">
-                    <div class="userDetails">
-                        <div class="comment-data">
-                            <div class="profilepic">
-                                <div class="profile_img">
-                                    <div class="image">
-                                        <!-- User Profile Image -->
-                                        <img src="{% static 'images/person.png' %}" alt="img8">
+            {% for comment in comments %}
+                <div class="comments">
+                    <div class="top">
+                        <div class="userDetails">
+                            <div class="comment-data">
+                                <div class="profilepic">
+                                    <div class="profile_img">
+                                        <div class="image">
+                                            <!-- User Profile Image -->
+                                            <img src="{% static 'images/person.png' %}" alt="img8">
+                                        </div>
                                     </div>
                                 </div>
+                                <p>
+                                    <!-- Link to User Profile Details Page-->
+                                    <!-- User First and/or Last Name or username-->
+                                    <a href="">Steven Ivanov</a>
+                                    <!-- User Comment -->
+                                    {{ comment.text }}
+                                </p>
                             </div>
-                            <p>
-                                <!-- Link to User Profile Details Page-->
-                                <!-- User First and/or Last Name or username-->
-                                <a href="">Steven Ivanov</a>
-                                <!-- User Comment -->
-                                {{ comment.text }}
-                            </p>
+                            <span>{{ comment.date_time_of_publication }}</span>
                         </div>
-                        <span>{{ comment.date_time_of_publication }}</span>
                     </div>
                 </div>
-            </div>
+            {% endfor %}
         {% endif %}
 
         <!-- Start Add Comments Section -->
