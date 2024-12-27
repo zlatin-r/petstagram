@@ -6,7 +6,7 @@
     <div class="edit-delete edit-photo">
         <h2>Add photo</h2>
         <!-- Start Add Photo Form -->
-        <form method="post" action="" enctype="multipart/form-data">
+        <form method="post" enctype="multipart/form-data"> <!-- enctype must be given to be the media data uploaded   -->
             {% csrf_token %}
             {{ form.as_p }}
 
