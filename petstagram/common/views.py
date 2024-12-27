@@ -15,14 +15,13 @@ def index(request):
     return render(request, 'common/home-page.html', context)
 
 
-def like_functionality(request, photo_id):
-    photo = Photo.objects.get(id=photo_id)
+def like_functionality(request, photo_id: int):
     liked_object = Like.objects.filter(to_photo_id=photo_id)
 
     if liked_object:
         liked_object.delete()
     else:
-        like = Like(to_photo=photo)
+        like = Like(to_photo_id=photo_id)
         like.save()
 
-    return redirect(request.META['HTTP_REFERER'] + f"{photo_id}")
+    return redirect(request.META['HTTP_REFERER'] + f"#{photo_id}")
