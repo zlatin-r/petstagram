@@ -26,4 +26,3 @@ def like_functionality(request, photo_id):
         like.save()
 
     return redirect(request.META['HTTP_REFERER'] + f"{photo_id}")
-
