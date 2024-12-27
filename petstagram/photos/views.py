@@ -25,6 +25,7 @@ def photo_details(request, pk):
     photo = Photo.objects.get(pk=pk)
     likes = photo.like_set.all()
     comments = photo.comment_set.all()
+
     comment_form = CommentForm()
 
     context = {
@@ -55,6 +56,5 @@ def photo_edit(request, pk):
 
 
 def photo_delete(request, pk):
-    photo = Photo.objects.get(pk=pk)
-    photo.delete()
+    Photo.objects.get(pk=pk).delete()
     return redirect('index')

@@ -39,11 +39,11 @@ def copy_link_to_clipboard(request, photo_id: int):
 
 def add_comment(request, photo_id: int):
     if request.method == 'POST':
-        photo = Photo.objects.get(id=photo_id)
-        form = CommentForm(request.POST)
+        photo = Photo.objects.get(pk=photo_id)
+        comment_form = CommentForm(request.POST)
 
-        if form.is_valid():
-            comment = form.save(commit=False)
+        if comment_form.is_valid():
+            comment = comment_form.save(commit=False)
             comment.to_photo = photo
             comment.save()
 
