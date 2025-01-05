@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load placeholder_filter %}
 {% load static %}
 {% block content %}
 
@@ -8,29 +9,20 @@
         <div class="login-register-box">
             <h1>Petstagram</h1>
 
-            <!-- Start Login Form-->
-            <form action="#">
-                <p>
-                    <label for="id_username">Username:</label>
-                    <input type="text" placeholder="Username">
-                </p>
-                <p>
-                    <label for="id_password">Password:</label>
-                    <input type="password" placeholder="Password">
-                </p>
+            <form method="post">
+                {% csrf_token %}
 
-                <!-- Login Button-->
+                {{ form.errors }}
+                {{ form.username|placeholder:"Email" }}
+                {{ form.password|placeholder:"Password" }}
+
                 <button type="submit">Log in</button>
             </form>
-            <!-- End Login Form -->
 
         </div>
         <div class="second-option">
-
-            <!-- Link to Register Page-->
             <p>Don't have an account? <a href="#">Register</a></p>
         </div>
     </div>
-    <!-- End Login Section-->
 
 {% endblock %}

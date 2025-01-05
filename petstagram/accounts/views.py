@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model, login
+from django.contrib.auth.views import LoginView
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views.generic import CreateView
@@ -21,8 +22,10 @@ class AppUserRegisterView(CreateView):
 
         return response
 
-# def login(request):
-#     return render(request, template_name='accounts/login-page.html')
+class AppUserLoginView(LoginView):
+    template_name = 'accounts/login-page.html'
+
+
 
 def show_profile_details(request, pk):
     return render(request, template_name='accounts/profile-details-page.html')
