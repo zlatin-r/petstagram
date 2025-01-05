@@ -1,6 +1,8 @@
 from django.contrib.auth.base_user import AbstractBaseUser
 from django.db import models
 
+from petstagram.accounts.managers import AppUserManager
+
 
 class AppUser(AbstractBaseUser):
     email = models.EmailField(
@@ -16,4 +18,5 @@ class AppUser(AbstractBaseUser):
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []
 
+    objects = AppUserManager()
 
