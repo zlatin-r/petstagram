@@ -12,8 +12,6 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 import os.path
 from pathlib import Path
 
-from petstagram.accounts.managers import AppUserManager
-
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -83,7 +81,7 @@ WSGI_APPLICATION = 'petstagram.wsgi.application'
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": "petstagram",
+        "NAME": "petstagram_app",
         "USER": "postgres",
         "PASSWORD": "password",
         "HOST": "127.0.0.1",
@@ -136,5 +134,5 @@ MEDIA_ROOT = os.path.join(BASE_DIR / 'mediafiles/')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-AUTH_USER_MODEL = 'accounts.app_user'
+AUTH_USER_MODEL = 'accounts.AppUser'
 
