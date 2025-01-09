@@ -37,3 +37,4 @@ def delete_profile(request, pk):
     return render(request, template_name='accounts/profile-delete-page.html')
 
 
+
