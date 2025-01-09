@@ -40,4 +40,3 @@ def delete_profile(request, pk):
 
 
 
-
