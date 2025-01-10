@@ -1,8 +1,9 @@
 from django.contrib.auth import get_user_model, login
 from django.contrib.auth.views import LoginView
+from django.db.models import Count
 from django.shortcuts import render
 from django.urls import reverse_lazy
-from django.views.generic import CreateView, UpdateView
+from django.views.generic import CreateView, UpdateView, DetailView
 
 from petstagram.accounts.forms import AppUserCreationForm, ProfileEditForm
 from petstagram.accounts.models import Profile
@@ -28,8 +29,25 @@ class AppUserLoginView(LoginView):
     template_name = 'accounts/login-page.html'
 
 
-def profile_details(request, pk):
-    return render(request, template_name='accounts/profile-details-page.html')
+# def profile_details(request, pk):
+#     return render(request, template_name='accounts/profile-details-page.html')
+
+
+class ProfileDetailView(DetailView):
+    model = UserModel
+    template_name = 'accounts/profile-details-page.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        # better way to take all likes:
+        photos_with_likes = self.object.photo_set.annotate(likes_count=Count('like'))
+
+        context['total_likes_count'] = sum(p.like_set.count() for p in self.object.photo_set.all())
+        context['total_pets_count'] = self.object.pet_set.count()
+        context['total_photos_count'] = self.object.photo_set.count()
+
+        return context
 
 
 def delete_profile(request, pk):

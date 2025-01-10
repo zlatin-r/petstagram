@@ -9,7 +9,11 @@
             <div class="profile_img">
                 <div class="image">
                     <!-- Profile Image -->
-                    <img src="{% static 'images/person.png' %}" alt="img8"/>
+                    {% if object.profile.profile_picture %}
+                        <img src="{{ object.profile.profile_picture }}" alt="img8"/>
+                    {% else %}
+                        <img src="{% static 'images/person.png' %}" alt="img8"/>
+                    {% endif %}
                 </div>
             </div>
             <div class="personal">
@@ -35,25 +39,23 @@
                 </div>
                 <div class="data">
                     <!-- Total Number of Photos by the User -->
-                    <span>4</span>
+                    <span>{{ total_photos_count }}</span>
                     <p>photos</p>
 
                     <!-- Total Number of Pets owned by the User -->
-                    <span>7</span>
+                    <span>{{ total_pets_count }}</span>
                     <p>pets</p>
 
                     <!-- Total Number of Likes for the User -->
-                    <span>436</span>
+                    <span>{{ total_likes_count }}</span>
                     <p>likes</p>
                 </div>
                 <!-- User First and Last Name IF Added -->
-                <h3 class="names">Diyan Kalaydziev</h3>
+                <h3 class="names">{{ object.profile.get_full_name }}</h3>
 
                 <!-- User Email Address -->
-                <p class="email">d.denov@gmail.com</p>
+                <p class="email">{{ object.email }}</p>
 
-                <!-- User Gender IF Added -->
-                <p class="gender">Male</p>
             </div>
         </div>
         <!-- End Profile Personal Data Section -->
@@ -61,128 +63,23 @@
         <!-- Start Pets Data Section -->
         <div class="pets">
             <div class="statuses">
-                <!-- Start 1st Pet Details Page -->
-                <!-- Link to First Pet Details Page -->
-                <a href="#">
-                    <div class="head-pet">
-                        <div class="status">
-                            <div class="image">
-                                <!-- Pet Image -->
-                                <img
-                                        src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTgoIHq82qLYnvomfz5ZkW5CLQ8VNxCyI-hUw&usqp=CAU"
-                                        alt="pet img"
-                                />
-                            </div>
-                        </div>
-                        <!-- Pet Name -->
-                        <p>Sasho</p>
-                    </div>
-                </a>
-                <!-- End 1st Pet Details Page -->
+                {% for pet in object.pet_set.all %}
 
-                <!-- Start 2nd Pet Details Page -->
-                <!-- Link to Second Pet Details Page -->
-                <a href="#">
-                    <div class="head-pet">
-                        <div class="status">
-                            <div class="image">
-                                <!-- Pet Image -->
-                                <img
-                                        src="https://cdn.pixabay.com/photo/2016/12/13/05/15/puppy-1903313__340.jpg"
-                                        alt="pet img"
-                                />
+                    <!-- Link to First Pet Details Page -->
+                    <a href="{% url 'pet-details' object.profile.get_full_name pet.slug %}">
+                        <div class="head-pet">
+                            <div class="status">
+                                <div class="image">
+                                    <!-- Pet Image -->
+                                    <img src="{{ pet.personal_photo }}" alt="pet img"/>
+                                </div>
                             </div>
+                            <!-- Pet Name -->
+                            <p>{{ pet.name }}</p>
                         </div>
-                        <!-- Pet Name -->
-                        <p>Todi</p>
-                    </div>
-                </a>
-                <!-- End 2nd Pet Details Page -->
+                    </a>
+                {% endfor %}
 
-                <!-- Start 3rd Pet Details Page -->
-                <!-- Link to Pet Details Page -->
-                <a href="#">
-                    <div class="head-pet">
-                        <div class="status">
-                            <div class="image">
-                                <img
-                                        src="https://images.unsplash.com/photo-1611003228941-98852ba62227?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MXx8YmFieSUyMGRvZ3xlbnwwfHwwfHw%3D&w=1000&q=80"
-                                        alt="pet img"
-                                />
-                            </div>
-                        </div>
-                        <p>Mihail</p>
-                    </div>
-                </a>
-                <!-- End 3rd Pet Details Page -->
-
-                <!-- Start 4th Pet Details Page -->
-                <!-- Link to Pet Details Page -->
-                <a href="#">
-                    <div class="head-pet">
-                        <div class="status">
-                            <div class="image">
-                                <img
-                                        src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Cat03.jpg/1200px-Cat03.jpg"
-                                        alt="pet img"
-                                />
-                            </div>
-                        </div>
-                        <p>Petar</p>
-                    </div>
-                </a>
-                <!-- End 4th Pet Details Page -->
-
-                <!-- Start 5th Pet Details Page -->
-                <!-- Link to Pet Details Page -->
-                <a href="#">
-                    <div class="head-pet">
-                        <div class="status">
-                            <div class="image">
-                                <img
-                                        src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQdKYe00NaD5SQjIMvXYPssq0r1dXJggL3ZIg&usqp=CAU"
-                                        alt="pet img"
-                                />
-                            </div>
-                        </div>
-                        <p>Stamat</p>
-                    </div>
-                </a>
-                <!-- End 5th Pet Details Page -->
-
-                <!-- Start 6th Pet Details Page -->
-                <!-- Link to Pet Details Page -->
-                <a href="#">
-                    <div class="head-pet">
-                        <div class="status">
-                            <div class="image">
-                                <img
-                                        src="https://cf.ltkcdn.net/small-pets/images/orig/278587-1600x1066-goldfish-swimming-in-fish-tank.jpg"
-                                        alt="pet img"
-                                />
-                            </div>
-                        </div>
-                        <p>Toni</p>
-                    </div>
-                </a>
-                <!-- End 6th Pet Details Page -->
-
-                <!-- Start 7th Pet Details Page -->
-                <!-- Link to Pet Details Page -->
-                <a href="#">
-                    <div class="head-pet">
-                        <div class="status">
-                            <div class="image">
-                                <img
-                                        src="https://i.pinimg.com/736x/01/6f/72/016f72c5812e1b8f71bdbf19d8c7558b.jpg"
-                                        alt="pet img"
-                                />
-                            </div>
-                        </div>
-                        <p>Daisy</p>
-                    </div>
-                </a>
-                <!-- End 7th Pet Details Page -->
             </div>
         </div>
         <!-- End Pets Data Section -->
