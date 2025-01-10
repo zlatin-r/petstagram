@@ -9,9 +9,15 @@
             <a href="#">
                 <div class="profilepic">
                     <div class="profile_img">
-                        <div class="image">
-                            <img src="{% static 'images/person.png' %}" alt="img8">
-                        </div>
+                        {% if photo.user.profile.profile_picture %}
+                            <div class="image">
+                                <img src="{{ photo.user.profile.profile_picture }}" alt="img8">
+                            </div>
+                        {% else %}
+                            <div class="image">
+                                <img src="{% static 'images/person.png' %}" alt="img8">
+                            </div>
+                        {% endif %}
                     </div>
                 </div>
             </a>
@@ -19,7 +25,7 @@
                 <!-- Link to User Profile Page -->
                 <a href="#">
                     <!-- if user has first name and last name -->
-                    Diyan Kalaydzhiev
+                    {{ photo.user.profile.get_full_name }}
                     <!-- else -->
                     <!-- show user username -->
                 </a>
@@ -139,7 +145,7 @@
         <div class="addComments">
 
             <!-- Start Add Comments Form -->
-            <form method="post" action="{%  url 'comment' photo.pk %}">
+            <form method="post" action="{% url 'comment' photo.pk %}">
                 {% csrf_token %}
                 {{ comment_form.as_p }}
                 <button type="submit">Post</button>
