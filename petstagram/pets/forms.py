@@ -2,10 +2,11 @@ from django import forms
 
 from petstagram.pets.models import Pet
 
-class PetForm(forms.ModelForm):
+class PetBaseForm(forms.ModelForm):
     class Meta:
         model = Pet
         fields = ('name', 'date_of_birth', 'personal_photo')
+
         widgets = {
             "name": forms.TextInput(attrs={"placeholder": "Pet name"}),
             "date_of_birth": forms.DateInput(attrs={"type": "date"}),
@@ -17,7 +18,7 @@ class PetForm(forms.ModelForm):
             "personal_photo": "Link to image",
         }
 
-class PetDeleteForm(PetForm):
+class PetDeleteForm(PetBaseForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
