@@ -35,7 +35,7 @@
                     <span>{{ photo.location }}</span>
                 {% endif %}
 
-                {% if photo_page %}
+                {% if photo_page and request.user.pk == photo.user.pk %}
                     <div class="edit-delete-btns">
                         <!-- Link to Edit Pet Photo Page -->
                         <a href="{% url 'photo-edit' photo.pk %}">
@@ -94,7 +94,7 @@
         <!-- Link to First Tagged Pet Details Page-->
         {% for pet in photo.tagged_pets.all %}
             <!-- Link to First Tagged Pet Details Page-->
-            <a href="{% url 'pet-details' "username" pet.slug %}">
+            <a href="{% url 'pet-details' photo.user.profile.get_full_name pet.slug %}">
                 <p class="message">
                     <b>{{ pet.name }}</b>
                 </p>
