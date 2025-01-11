@@ -3,7 +3,7 @@ from django.contrib.auth.views import LoginView
 from django.db.models import Count
 from django.shortcuts import render
 from django.urls import reverse_lazy
-from django.views.generic import CreateView, UpdateView, DetailView
+from django.views.generic import CreateView, UpdateView, DetailView, DeleteView
 
 from petstagram.accounts.forms import AppUserCreationForm, ProfileEditForm
 from petstagram.accounts.models import Profile
@@ -50,8 +50,14 @@ class ProfileDetailView(DetailView):
         return context
 
 
-def delete_profile(request, pk):
-    return render(request, template_name='accounts/profile-delete-page.html')
+# def delete_profile(request, pk):
+#     return render(request, template_name='accounts/profile-delete-page.html')
+
+
+class ProfileDeleteView(DeleteView):
+    model = Profile
+    template_name = 'accounts/profile-delete-page.html'
+    success_url = reverse_lazy('login')
 
 
 class ProfileEditView(UpdateView):
