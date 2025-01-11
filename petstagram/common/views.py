@@ -22,6 +22,11 @@ class HomePage(ListView):
         context['comment_form'] = CommentForm()
         context['search_form'] = SearchForm(self.request.GET)
 
+        user = self.request.user
+
+        for photo in context['all_photos']:
+            photo.has_liked = photo.like_set.filter(user=user).exists() if user.is_authenticated else False
+
         return context
 
     def get_queryset(self):
