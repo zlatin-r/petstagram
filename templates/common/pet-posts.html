@@ -6,7 +6,7 @@
     <div class="top">
         <div class="userDetails">
             <!-- Link to User Profile Page -->
-            <a href="#">
+            <a href="{% url 'profile-details' photo.user.pk %}">
                 <div class="profilepic">
                     <div class="profile_img">
                         {% if photo.user.profile.profile_picture %}

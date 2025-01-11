@@ -67,7 +67,10 @@ class HomePage(ListView):
 
 @login_required
 def like_functionality(request, photo_id: int):
-    liked_object = Like.objects.filter(to_photo_id=photo_id)
+    liked_object = Like.objects.filter(
+        to_photo_id=photo_id,
+        user=request.user
+    ).first()
 
     if liked_object:
         liked_object.delete()
