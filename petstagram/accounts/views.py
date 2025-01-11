@@ -56,10 +56,15 @@ class ProfileDetailView(LoginRequiredMixin, DetailView):
 #     return render(request, template_name='accounts/profile-delete-page.html')
 
 
-class ProfileDeleteView(LoginRequiredMixin, DeleteView):
+class ProfileDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = Profile
     template_name = 'accounts/profile-delete-page.html'
     success_url = reverse_lazy('login')
+
+    def test_func(self):
+        # check if it's the logged user, if not raises error
+        profile = get_object_or_404(Profile, pk=self.kwargs['pk'])
+        return self.request.user == profile.user
 
 
 class ProfileEditView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
