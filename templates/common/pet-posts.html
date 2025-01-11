@@ -39,13 +39,11 @@
                     <div class="edit-delete-btns">
                         <!-- Link to Edit Pet Photo Page -->
                         <a href="{% url 'photo-edit' photo.pk %}">
-                            <img class="edit-img" src="{% static '/images/edit-pen-icon-6.jpg' %}"
-                                 alt="edit button">
+                            <img class="edit-img" src="{% static '/images/edit-pen-icon-6.jpg' %}" alt="edit button">
                         </a>
                         <!-- Link to Delete Pet Photo Page -->
                         <a href="{% url 'photo-delete' photo.pk %}">
-                            <img class="bin-img" src="{% static '/images/icon-remove-22.jpg' %}"
-                                 alt="bin button">
+                            <img class="bin-img" src="{% static '/images/icon-remove-22.jpg' %}" alt="bin button">
                         </a>
                     </div>
                 {% endif %}
@@ -122,7 +120,11 @@
                                     <div class="profile_img">
                                         <div class="image">
                                             <!-- User Profile Image -->
-                                            <img src="{% static 'images/person.png' %}" alt="img8">
+                                            {% if comment.user.profile.profile_picture %}
+                                                <img src="{{ comment.user.profile.profile_picture }}" alt="img8">
+                                            {% else %}
+                                                <img src="{% static 'images/person.png' %}" alt="img8">
+                                            {% endif %}
                                         </div>
                                     </div>
                                 </div>

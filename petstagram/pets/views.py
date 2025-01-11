@@ -1,5 +1,5 @@
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.shortcuts import render, redirect
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, DetailView, UpdateView, DeleteView
 
@@ -31,7 +31,7 @@ class AddPetView(LoginRequiredMixin, CreateView):
 
     def form_valid(self, form):
         pet = form.save(commit=False)
-        pet.user = self.request.user       # attach the new pet to the current user
+        pet.user = self.request.user  # attach the new pet to the current user
         return super().form_valid(form)
 
     def get_success_url(self):
@@ -87,7 +87,7 @@ class PetDetailsView(LoginRequiredMixin, DetailView):
 #     return render(request, 'pets/pet-edit-page.html', context)
 
 
-class EditPetView(LoginRequiredMixin, UpdateView):
+class EditPetView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Pet
     form_class = PetForm
     template_name = 'pets/pet-edit-page.html'
@@ -101,6 +101,11 @@ class EditPetView(LoginRequiredMixin, UpdateView):
                 'username': self.kwargs['username'],
                 'pet_slug': self.kwargs['pet_slug']
             })
+
+    def test_func(self):
+        # check if it's the logged user, if not raises error
+        pet = get_object_or_404(Pet, slug=self.kwargs['pet_slug'])
+        return self.request.user == pet.user
 
 
 # def pet_delete(request, username, pet_slug):
@@ -117,12 +122,24 @@ class EditPetView(LoginRequiredMixin, UpdateView):
 #     return render(request, 'pets/pet-delete-page.html', context)
 
 
-class DeletePetView(LoginRequiredMixin, DeleteView):
+class DeletePetView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = Pet
     template_name = 'pets/pet-delete-page.html'
     slug_url_kwarg = 'pet_slug'
     form_class = PetDeleteForm
-    success_url = reverse_lazy('profile-details', kwargs={'pk': 1})
+
+    def get_success_url(self):
+        return reverse_lazy(
+            'profile-details',
+            kwargs={
+                'pk': self.request.user.pk,
+            }
+        )
+
+    def test_func(self):
+        # check if it's the logged user, if not raises error
+        pet = get_object_or_404(Pet, slug=self.kwargs['pet_slug'])
+        return self.request.user == pet.user
 
     # context_object_name = 'pet'
 
