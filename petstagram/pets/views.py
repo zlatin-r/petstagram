@@ -60,13 +60,20 @@ class AddPetView(LoginRequiredMixin, CreateView):
 class PetDetailsView(LoginRequiredMixin, DetailView):
     model = Pet
     template_name = 'pets/pet-details-page.html'
-    context_object_name = 'pet'
     slug_url_kwarg = 'pet_slug'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['all_photos'] = self.object.photo_set.all()
+        context['all_photos'] = context['pet'].photo_set.all()
         context['comment_form'] = CommentForm()
+
+        all_photos = context['pet'].photo_set.all()
+
+        for photo in all_photos:
+            photo.has_liked = photo.like_set.filter(user=self.request.user).exists()
+
+        context['all_photos'] = all_photos
+
         return context
 
 
